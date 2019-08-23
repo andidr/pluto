@@ -133,6 +133,21 @@ void pluto_mark_parallel(struct clast_stmt *root, const PlutoProg *prog,
   pluto_bands_free(pbands, npbands);
 }
 
+void pluto_unroll_jam(struct clast_stmt *root, const PlutoProg *prog,
+                      CloogOptions *cloogOptions, unsigned ufactor) {
+
+  assert(root != NULL);
+  unsigned num_ujloops;
+  Ploop **ujloops = pluto_get_unroll_jam_loops(prog, &num_ujloops);
+  if (num_ujloops == 0) {
+    printf("[pluto-unroll-jam] No unroll jam loop candidates found\n");
+    return;
+  }
+  IF_DEBUG(printf("Possible Unroll jam loops \n"));
+  IF_DEBUG(pluto_loops_print(ujloops, num_ujloops));
+  /* TODO: Get cloog clast for the appropriate loop and update the AST. */
+}
+
 /*
  * Clast-based vector loop marking */
 void pluto_mark_vector(struct clast_stmt *root, const PlutoProg *prog,

@@ -439,6 +439,24 @@ int pluto_loop_compar(const void *_l1, const void *_l2) {
   return 1;
 }
 
+/// Returns a list of intra tile loops that are possible candidates for unroll
+/// jam.
+Ploop **pluto_get_unroll_jam_loops(const PlutoProg *prog,
+                                   unsigned *num_ujloops) {
+  unsigned num = 0;
+  Ploop **loops = pluto_get_all_loops(prog, &num);
+  unsigned nloops = 0;
+  Ploop **ujloops = NULL;
+  for (unsigned i = 0; i < num; i++) {
+    if (is_tile_space_loop(loops[i], prog))
+      continue;
+    ujloops = (Ploop **)realloc(ujloops, (nloops + 1) * sizeof(Ploop *));
+    ujloops[nloops++] = pluto_loop_dup(loops[i]);
+  }
+  *num_ujloops = nloops;
+  return ujloops;
+}
+
 /* Get all parallel loops */
 Ploop **pluto_get_parallel_loops(const PlutoProg *prog, unsigned *nploops) {
   Ploop **loops, **ploops;
