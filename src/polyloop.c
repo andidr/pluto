@@ -439,8 +439,7 @@ int pluto_loop_compar(const void *_l1, const void *_l2) {
   return 1;
 }
 
-/// Returns a list of intra tile loops that are possible candidates for unroll
-/// jam.
+/// Returns a list of intra tile loops that are candidates for unroll jam.
 Ploop **pluto_get_unroll_jam_loops(const PlutoProg *prog,
                                    unsigned *num_ujloops) {
   unsigned num = 0;
