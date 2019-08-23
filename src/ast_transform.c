@@ -145,7 +145,42 @@ void pluto_unroll_jam(struct clast_stmt *root, const PlutoProg *prog,
   }
   IF_DEBUG(printf("Possible Unroll jam loops \n"));
   IF_DEBUG(pluto_loops_print(ujloops, num_ujloops));
-  /* TODO: Get cloog clast for the appropriate loop and update the AST. */
+
+  for (unsigned i = 0; i < num_ujloops; i++) {
+    char iter[13];
+    sprintf(iter, "t%d", ujloops[i]->depth + 1);
+    int *stmtids = (int *)malloc(ujloops[i]->nstmts * sizeof(int));
+    for (unsigned j = 0; j < ujloops[i]->nstmts; j++) {
+      stmtids[j] = ujloops[i]->stmts[j]->id + 1;
+    }
+
+    struct clast_for **loops;
+    unsigned nloops, nstmts;
+    int *stmts;
+    ClastFilter filter = {iter, stmtids, (int)ujloops[i]->nstmts, subset};
+    clast_filter(root, filter, &loops, (int *)&nloops, &stmts, (int *)&nstmts);
+
+    /* There should be at least one */
+    if (nloops == 0) {
+      /* Sometimes loops may disappear (1) tile size larger than trip count
+       * 2) it's a scalar dimension but can't be determined from the
+       * trans matrix */
+      printf("[pluto] pluto_unroll_jam: WARNING: Unroll-jam poly loop not "
+             "found in AST\n");
+      free(stmtids);
+      free(loops);
+      free(stmts);
+      continue;
+    }
+    for (unsigned j = 0; j < nloops; j++) {
+      loops[j]->parallel += CLAST_UNROLL_JAM;
+    }
+    free(stmtids);
+    free(loops);
+    free(stmts);
+  }
+
+  pluto_loops_free(ujloops, num_ujloops);
 }
 
 /*

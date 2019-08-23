@@ -450,10 +450,16 @@ Ploop **pluto_get_unroll_jam_loops(const PlutoProg *prog,
   for (unsigned i = 0; i < num; i++) {
     if (is_tile_space_loop(loops[i], prog))
       continue;
+    /* Do not unroll jam parallel loop. */
+    if (pluto_loop_is_parallel(prog, loops[i]))
+      continue;
+    if (pluto_loop_is_innermost(loops[i], prog))
+      continue;
     ujloops = (Ploop **)realloc(ujloops, (nloops + 1) * sizeof(Ploop *));
     ujloops[nloops++] = pluto_loop_dup(loops[i]);
   }
   *num_ujloops = nloops;
+  pluto_loops_free(loops, num);
   return ujloops;
 }
 
