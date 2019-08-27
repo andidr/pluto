@@ -452,6 +452,7 @@ Ploop **pluto_get_unroll_jam_loops(const PlutoProg *prog,
     /* Do not unroll jam parallel loop. */
     if (pluto_loop_is_parallel(prog, loops[i]))
       continue;
+    /* Do not unroll jam the innermost loop.*/
     if (pluto_loop_is_innermost(loops[i], prog))
       continue;
     ujloops = (Ploop **)realloc(ujloops, (nloops + 1) * sizeof(Ploop *));

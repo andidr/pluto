@@ -841,7 +841,7 @@ PlutoOptions *pluto_options_alloc() {
   options->unrolljam = 0;
 
   /* Unroll/jam factor */
-  options->ufactor = 8;
+  options->ufactor = 4;
 
   /* Ignore input deps */
   options->rar = 0;
