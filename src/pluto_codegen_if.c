@@ -290,7 +290,9 @@ int pluto_gen_cloog_code(const PlutoProg *prog, int cloogf, int cloogl,
 
   if (options->unrolljam) {
     pluto_mark_unroll_jam(root, prog, cloogOptions, options->ufactor);
+    clast_unroll_jam(root);
   }
+
   if (options->prevector) {
     pluto_mark_vector(root, prog, cloogOptions);
   }
